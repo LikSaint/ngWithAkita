@@ -1,0 +1,51 @@
+<div class="header">
+  <p class="header-column">
+    Обновлялось {{updatedAt$ | async | date:"HH:mm:ss dd/MM/yyyy"}}
+  </p>
+
+  <p class="header-column">Счетчик = {{count$ | async}}</p>
+
+  <button
+    class="header-column"
+    (click)="addHero()"
+    [disabled]="cannotAddNewHero$ | async"
+    class="add"
+  >
+    Добавить героя
+  </button>
+</div>
+
+
+<div class="main">
+  <div class="list-header">
+    <div class="column">
+      id
+    </div>
+    <div class="column">
+      Имя
+    </div>
+    <div class="column">
+      Мощщщь
+    </div>
+    <div class="column">
+      Возраст
+    </div>
+  </div>
+
+  <div class="list">
+    <div *ngFor="let hero of heroesList$ | async" class="element" (click)="deleteHero(hero)">
+      <div class="column">
+        {{hero.id}}
+      </div>
+      <div class="column">
+        {{hero.name}}
+      </div>
+      <div class="column">
+        {{hero.power}}
+      </div>
+      <div class="column">
+        {{hero.age}}
+      </div>
+    </div>
+  </div>
+</div>
