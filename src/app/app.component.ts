@@ -1,9 +1,8 @@
 import {Component} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {map} from 'rxjs/operators';
-import {addHero, clear, deleteHero, heroesCountSelector, heroesListSelector, updatedAtSelector} from './reducers/heroes';
-import {HeroesApi} from './heroesApi';
 import {Hero} from './hero';
+import {HeroesService} from './stores/heroes/service';
+import {HeroesQueries} from './stores/heroes/query';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -11,31 +10,26 @@ import {Hero} from './hero';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  count$ = this.store.select(heroesCountSelector);
+  count$ = this.heroesQueries.selectCount();
   cannotAddNewHero$ = this.count$.pipe(map(count => count >= 10));
-  updatedAt$ = this.store.select(updatedAtSelector);
-  heroesList$ = this.store.select(heroesListSelector);
+  updatedAt$ = this.heroesQueries.selectUpdatedAt();
+  heroesList$ = this.heroesQueries.selectAll();
 
   constructor(
-    private store: Store,
-    private heroesApi: HeroesApi,
+    private heroesService: HeroesService,
+    private heroesQueries: HeroesQueries,
   ) {
   }
 
   public addHero(): void {
-    const newHero = this.heroesApi.getNewHero();
-    if (newHero) {
-      this.store.dispatch(addHero({hero: newHero}));
-    }
+    this.heroesService.addHero();
   }
 
   public deleteHero(hero: Hero): void {
-    this.heroesApi.refreshHero(hero.id);
-    this.store.dispatch(deleteHero({heroId: hero.id}));
+    this.heroesService.delete(hero.id);
   }
 
   public clear(): void {
-    this.heroesApi.clearList();
-    this.store.dispatch(clear());
+    this.heroesService.clear();
   }
 }
